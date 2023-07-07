@@ -1,0 +1,10 @@
+Create Table todo_list(
+task_id int primary key,
+task_name varchar(259),
+description varchar(259),
+is_completed varchar(5)
+);
+
+insert into todo_list (task_id,task_name,description,is_completed) values (100,"Cln Room","Cleaning the Room","Yes");
+
+select * from todo_list;
