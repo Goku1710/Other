@@ -214,9 +214,11 @@ vectorizer = TfidfVectorizer()
 vector_matrix = vectorizer.fit_transform(data)
 tokens = vectorizer.get_feature_names_out()
 create_dataframe = (vector_matrix.toarray(), tokens)
-cosine_similarity_matrix = cosine_similarity(vector_matrix)
-create_dataframe = cosine_similarity_matrix[0, 1]
 print(create_dataframe)
+cosine_similarity_matrix = cosine_similarity(vector_matrix)
+cosine_similarity = cosine_similarity_matrix[0, 1]
+print(cosine_similarity)
+
 
 *------------------Pract - 7
 
