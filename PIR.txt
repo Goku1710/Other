@@ -238,21 +238,24 @@ print("Hub Scores:",hub_scores)
 
 from functools import reduce 
 from collections import defaultdict
-def mapper(data): 
-    char_count=defaultdict(int) 
-    for char in data:         
-        if char.isalpha(): 
-            char_count[char.lower()]+=1 
-    return char_count.items() 
+
+
+# def mapper(data): 
+#     char_count=defaultdict(int) 
+#     for char in data:         
+#         if char.isalpha(): 
+#             char_count[char.lower()]+=1 
+#     return char_count.items() 
          
-def reducer(counts1,counts2):   
-    merged_counts=defaultdict(int)
-    for char,count in counts1: 
-        merged_counts[char] += count
-        for char,count in counts2:
-            merged_counts[char] += count
-    return merged_counts.items()
-            
+# def reducer(counts1,counts2):   
+#     merged_counts=defaultdict(int)
+#     for char,count in counts1: 
+#         merged_counts[char] += count
+#         for char,count in counts2:
+#             merged_counts[char] += count
+#     return merged_counts.items()
+
+
 if __name__=="__main__":
     dataset="Hello, world! This is a MapReduce example." 
     chunks=[chunk for chunk in dataset.split()]
@@ -268,14 +271,14 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords 
 set(stopwords.words('english')) 
  
-nltk.download('punkt')
+#nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize 
 example="This is a sample sentence, showing off the stopwords filtration."
 stop_words=set(stopwords.words('english')) 
 word_tokens=word_tokenize(example) 
-filtered_sentence=[w for w in word_tokens if not w in stop_words]
 filtered_sentence=[]
+#filtered_sentence=[w for w in word_tokens if not w in stop_words]
 for w in word_tokens:    
     if w not in stop_words:
         filtered_sentence.append(w) 
