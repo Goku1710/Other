@@ -1,0 +1,427 @@
+*------------------Pract - 1
+
+from wordcloud import WordCloud, STOPWORDS # to get word frequency
+import matplotlib.pyplot as plt # plotting graph
+import wikipedia as wp # access wikipedia pages
+
+result = wp.page("Football") # open a page for the "Computer Science"
+final_result = result.content # here all contents of the page is stored
+
+def plot_wordcloud(wc):
+    plt.axis("off")
+    plt.figure(figsize=(10, 10))
+    plt.imshow(wc)
+    plt.show()
+    
+# wc - wordcloud object
+# .generate() - specifies where to create wordcloud, here final_result
+wc = WordCloud(width=500, height=500, background_color="cyan", random_state=10, stopwords=STOPWORDS).generate(final_result)
+wc.to_file("P01_Word_Cloud_Wikipedia.png") # storing file with a name in cwd
+plot_wordcloud(wc)
+
+*------------------Pract - 2
+
+Using HTML
+
+import pandas as pd # for dataframe
+from bs4 import BeautifulSoup # webscraping module
+from urllib.request import urlopen # url module
+
+url = "https://en.wikipedia.org/wiki/List_of_Asian_countries_by_area"
+page = urlopen(url)
+html_page = page.read().decode("utf-8") # reading the page content & decoding 
+soup = BeautifulSoup(html_page, "html.parser") # here html content is stored
+table_var = soup.find("table") # select only the specified contents of the tag
+
+# create 3 list for 3 columns
+SrNo = []
+Country = []
+Area = []
+rows = table_var.find("tbody").find_all("tr")
+
+# loop to get row values according to index of wiki table
+for row in rows:
+    cells = row.find_all("td") # store value of row cells
+    if (cells): # cells == True then run this
+        SrNo.append(cells[0].get_text().strip("\n")) # strip: remove specified characters or special char
+        Country.append(cells[1].get_text().strip("\xa0").strip("\n")) # xa0: remove images
+        Area.append(cells[3].get_text().strip("\n").replace(",", "")) # , causes error thus replace with empty string
+        
+# creating dataframe
+country_df = pd.DataFrame() # this creates an empty dataframe
+country_df["ID"] = SrNo # refering SrNo as ID
+country_df["Country"] = Country # refering Country as ID
+country_df["Area"] = Area # refering Area as ID
+print(country_df.head(10)) # .head to limit records displaying, default 5
+
+
+Using JSON
+
+import pandas as pd
+import urllib, json
+
+url = "https://jsonplaceholder.typicode.com/users"
+response = urllib.request.urlopen(url) # Here the content from url is stored
+data = json.loads(response.read()) # Reading json data in python as list of dictionary
+
+# Empty list for ID, Email, Username
+id = []
+username = []
+email = []
+
+# Traversing the data
+for item in data:
+    if "id" in item.keys(): # Checking if "id" is present in item
+        id.append(item["id"])
+    else:
+        id.append("NA")
+    if "username" in item.keys(): # Checking if "username" is present in item
+        username.append(item["username"])
+    else:
+        username.append("NA")
+    if "email" in item.keys(): # Checking if "email" is present in item
+        email.append(item["email"])
+    else:
+        email.append("NA")
+        
+user_df = pd.DataFrame() # Create Dataframe Object
+# Creating columns for ID, Username, Email
+user_df["ID"] = id
+user_df["Username"] = username
+user_df["Email"] = email
+
+print(user_df.head(10))
+
+*------------------Pract - 3
+
+import pandas as pd
+titanic = pd.read_csv("train.csv") # reading csv file
+titanic.head()
+
+titanic.info() # comparable to 'str()' in R lang
+
+titanic.describe() # comparable to 'summary()' of R lang
+
+# To get the total null entries in dataframe
+titanic.isnull().sum()
+
+titanic_cleaned = titanic.drop(['PassengerId', 'Name', 'Ticket', 'Fare', 'Cabin'], axis=1) # 1: col, 0: row
+titanic_cleaned.info()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+# matplotlib inlne # generate the plots within jupyter notebook display area
+# Categorical plot for sex with survived as hue
+sns.catplot(x = "Sex", hue = "Survived", kind = "count", data = titanic_cleaned)
+
+titanic_cleaned.groupby(['Sex', 'Survived'])['Survived'].count()
+
+
+sns.heatmap(gender_survived, annot=True, fmt="d") # Heatmap: Data visualization tool that helps to represent the magnitude of the matrix in form of a colored table. 
+# fmt: Used when adding annotation fromatting
+# annot: To display value of data
+
+group2 = titanic_cleaned.groupby(['Pclass', 'Survived'])
+pclass_survived = group2.size().unstack()
+pclass_survived
+
+
+sns.heatmap(pclass_survived, annot=True, fmt="d")
+
+
+# Violin Plot: Displays ditribution of data
+sns.violinplot(x="Sex", y="Age", hue="Survived", data=titanic_cleaned, split=True)
+
+
+print(
+"Oldest Person to Survive: ", titanic_cleaned['Age'].max(),
+"\nAverage Age Person to Survive: ", titanic_cleaned['Age'].mean(),
+"\nYoungest Person to Survive: ", titanic_cleaned['Age'].min()
+)
+
+
+titanic_cleaned.isnull().sum()
+
+
+# Imputing: Adding random values to find missing data
+
+def impute(cols):
+    Age = cols[0] # Set values from Age Col
+    Pclass = cols[1] # Set values from Pclass Col
+    # If pandas (pd) returns Null for Age
+    if pd.isnull(Age):
+        # For first class
+        if Pclass==1:
+            return 38
+        # For second class
+        elif Pclass==2:
+            return 29
+        else:
+            return 24
+    # If Age is not Null then return Age
+    else:
+        return Age
+
+titanic_cleaned['Age'] = titanic_cleaned[['Age', 'Pclass']].apply(impute, axis = 1) # axis: 1 for columns, axis: 0 for rows
+
+
+titanic_cleaned.isnull().sum() # Age has been retrieved
+
+
+titanic.corr(method='pearson')
+
+sns.heatmap(titanic_cleaned.corr(method="pearson"), annot=True, vmax=1)
+
+*------------------Pract - 4
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# Generate random x values
+x = np.random.uniform(low=0, high=10, size=100)
+
+# Generate random error terms
+error = np.random.normal(loc=0, scale=2, size=100)
+
+# Generate y values based on the linear model Y = 10 + 7x + e
+y = 10 + 7 * x + error
+
+# Reshape x for sklearn's input requirement
+x = x.reshape(-1, 1)
+
+# Fit linear regression model
+model = LinearRegression()
+model.fit(x, y)
+
+# Predict y values based on the model
+y_pred = model.predict(x)
+
+# Plot the original data points and the regression line
+plt.scatter(x, y, color='blue', label='Data')
+plt.plot(x, y_pred, color='red', label='Linear Regression')
+plt.title('Univariate Linear Regression')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+
+
+*------------------Pract - 5
+import numpy as np
+from sklearn import datasets
+x, y, coef = datasets.make_regression(
+    n_samples=100, # Number of samples on X & Y axis 
+    n_features=1, # Number of independant variable {Here, Experience is IV}
+    n_informative=1, # Number of features used to build the linear model used to generate the output
+    noise=10, # To add scatterness to data 
+    coef=True, # Return coefficients of the underlying linear model if True
+    random_state=0 # To generate same data for each call (0: False, 1: True)
+)
+x = np.interp(x, (x.min(), x.max()), (0, 20))
+print(len(x))
+print(x)
+
+y = np.interp(y, (y.min(), y.max()), (20000, 150000))
+print(len(y))
+print(y)
+
+import matplotlib.pyplot as plt
+plt.plot(x, y, '.')
+plt.xlabel("Years of Experience")
+plt.ylabel("Salary")
+plt.title("Experience vs Salary")
+
+from sklearn.linear_model import LinearRegression
+reg_model = LinearRegression()
+reg_model.fit(x, y)
+y_pred = reg_model.predict(x)
+plt.plot(x, y_pred, color="black")
+plt.plot(x, y, '.', label="Training Data")
+plt.xlabel("Years of Experience")
+plt.ylabel("Salary")
+plt.title("Experience vs Salary")
+
+*------------------Pract - 6
+
+import pandas as pd
+import matplotlib.pyplot as plt 
+import sklearn 
+boston=pd.read_csv("Boston.csv")
+boston.head()
+
+
+boston=boston.drop(columns="Unnamed: 0")
+boston.head()
+
+##All the rows from 0 to 12 will be retrive 
+boston_x=pd.DataFrame(boston.iloc[:,:13]) ##only the last column will be removed 
+boston_y=pd.DataFrame(boston.iloc[:,-1])
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test=train_test_split(boston_x,boston_y,test_size=0.3)
+print("xtrain shape",X_train.shape)
+print("ytrain shape",Y_train.shape) 
+print("xtest shape",X_test.shape) 
+print("ytest shape",Y_test.shape)
+
+
+from sklearn.linear_model import LinearRegression
+regression=LinearRegression()
+regression.fit(X_train,Y_train) 
+Y_pred_linear=regression.predict(X_test)
+Y_pred_df=pd.DataFrame(Y_pred_linear,columns=["Predicted"]) 
+Y_pred_df.head()
+
+plt.scatter(Y_test,Y_pred_linear,c="green") 
+plt.xlabel("Actual Price(medv)")
+plt.ylabel("Predicted Price")
+plt.title("Actual vs predicted Price ")
+plt.show
+
+*----------------Pract - 7
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_breast_cancer
+from sklearn.metrics import confusion_matrix
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+
+bc_df=load_breast_cancer()
+x=pd.DataFrame(bc_df.data,columns=bc_df.feature_names)  
+x.head()
+
+x=x[["mean area","mean compactness"]]
+x.head()
+
+
+y=pd.Categorical.from_codes(bc_df.target,bc_df.target_names)#categorical variable from data
+print(y)
+
+
+#benign=False -> malignant  #`COnverting two categorical variable into one
+#benign=True -> benign
+
+y=pd.get_dummies(y,drop_first=True) #dropping malignant
+print(y)
+
+X_train,X_test,Y_train,Y_test=train_test_split(x,y,random_state=1) #Skipping ratio will give bydefault 70-30
+#recreate the same randomness everytime we run the function 
+knn=KNeighborsClassifier(n_neighbors=5,metric="euclidean")
+knn.fit(X_train,Y_train)
+
+
+sns.set() #scatterplot
+sns.scatterplot(x="mean area",y="mean compactness",hue="benign",data=X_test.join(Y_test,how="outer"))
+
+
+y_pred=knn.predict(X_test)
+plt.scatter(X_test["mean area"],X_test["mean compactness"],c=y_pred,cmap="coolwarm",alpha=0.7) #size of graph
+plt.show()
+
+cf=confusion_matrix(Y_test,y_pred) 
+print(cf)
+
+
+labels=["True Negative","False Positive","False Negatve","True Positive"]
+labels=np.asarray(labels).reshape(2,2)
+categories=['Zero','One']
+ax=plt.subplot() 
+sns.heatmap(cf,annot=True,ax=ax) 
+ax.set_xlabel("Predicted Values") 
+ax.set_ylabel("True Values")
+ 
+ax.set_title("Confusion Matrix") 
+ax.xaxis.set_ticklabels(["Malignant","Benign"])
+ax.yaxis.set_ticklabels(["Malignant","Benign"])
+
+tp,fn,fp,tn=confusion_matrix(Y_test,y_pred,labels=[1,0]).reshape(-1)
+print("Values for TP,FN,FP,TN:",tp,fn,fp,tn)
+
+Accuracy=(tp+tn)/(tp+tn+fp+fn)
+print(Accuracy)
+
+from sklearn.metrics import f1_score
+f1_score(Y_test,y_pred)
+
+
+from sklearn.metrics import roc_auc_score
+print(roc_auc_score(Y_test,y_pred))
+
+
+*--------------------------R Program
+
+df = read.csv("mtcars.csv") 
+View(df)
+str(df) 
+
+#Gives structure of the dataframe dim(df) 
+#Get Dimension of dataframe names(df) 
+#gives column names as vector
+
+row.names(df) = df$model #assign variable name as row name row.names(df)
+df= df[,-1] # to delete Columns
+
+library("dplyr") 
+
+#SELECT FUNCTION
+dh1 = select(df, mpg:hp) 
+View(dh1)
+df1 = df %>% select(mpg:hp) 
+View(df1)
+df1 = df %>% select(c(mpg,hp,wt))
+View(df1)
+
+##FILTER FUNCTION
+df1 = df %>% filter(gear==4 |mpg>20) %>% select(c(mpg,hp,wt,gear))
+View(df1)
+
+##ARRANGE FUNCTION
+df1 = df1 %>% arrange(cyl, desc(mpg), desc(wt)) %>% select(c(mpg,hp,wt,gear))
+View(df1)
+
+#RENAME FUNCTION
+df1 = df %>% rename(MilesPerGallon = mpg, Displacement = disp)
+View(df1)
+
+#MUTATE FUNCTION
+df1 = df %>% mutate(Power = hp*wt)
+View(df1)
+
+#GROUP BY AND SUMMARISE FUNCTION
+df$cyl = as.factor(df$cyl)
+df1 = df %>% group_by(df$cyl) %>% summarise(n=n(), mean_mpg = mean(mpg))
+View(df1)
+
+
+# group df by year and summarise meanofmpg, dispacemnet,weight
+df$gear = as.factor(df$gear)
+df1 = df %>% group_by(df$gear) %>% summarise(n=n(), mean_mpg = mean(mpg), mean_disp = mean(disp), mean_wt = mean(wt))
+View(df1) 
+
+#DataVisualization #Histogram
+hist(df$mpg) #Gives histogram graph for the specified column 
+hist(df$mpg, main="Histogram of MPG(mtcars)",col="lightgreen", border="darkorange", xlab="Miles per Gallon")
+#Main is for title, col for colour, border is for border color and xlab is used to set label for x-axis
+
+#Barplot
+df$cyl=as.factor(df$cyl)
+table(df$cyl) 
+barplot(table(df$cyl)) 
+
+#BoxPlot
+summary(df$mpg)
+boxplot(df$mpg) 
+#Scatterplot
+plot(df$mpg~df$disp) #df$mpg~df$disp means => The effect of #Displacement on MPG
+
+
