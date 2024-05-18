@@ -1,4 +1,5 @@
 
+-- Created a Movies Database
 create table MoviesDB (
  Movie_name varchar(255) primary key,
  yr int(10),
@@ -8,6 +9,7 @@ create table MoviesDB (
  Movie_Rating Enum('1-Star','2-Star','3-Star','4-Star','5-Star')
 );
 
+-- Created a Members Database
 create table Member (
 Uname varchar(255),
 Movie_name varchar(255),
@@ -15,6 +17,7 @@ Total_Rating int,
 Followers int,
 Liked Enum('Yes','No')
 );
+
 
 INSERT INTO MoviesDB (Movie_name, yr, likes, Genre, Service, Movie_Rating) VALUES
 ('Inception', 2010, 25000, 'Sci-Fi', 'Netflix', '5-Star'),
